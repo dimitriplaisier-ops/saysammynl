@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SaySammy — Enquête</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F7F5F0;--card:#FFF;--primary:#E05A3A;--pl:#FFF1ED;--ph:#C94E30;--pd:#A63D24;--text:#1C1917;--tm:#78716C;--tl:#A8A29E;--border:#E7E5E4;--surface:#FAFAF9;--amber:#D97706;--al:#FFFBEB;--r:12px;--rs:8px;--ss:0 1px 2px rgba(0,0,0,.05);--s:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);--sm:0 4px 6px -1px rgba(0,0,0,.07),0 2px 4px -2px rgba(0,0,0,.05)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6;-webkit-font-smoothing:antialiased}
+.top-bar{height:6px;background:linear-gradient(90deg,var(--primary),#F59E0B,var(--primary));position:fixed;top:0;left:0;right:0;z-index:100}
+.container{max-width:680px;margin:0 auto;padding:40px 20px 80px}
+.progress-wrap{position:fixed;top:6px;left:0;right:0;z-index:99;background:rgba(247,245,240,.92);backdrop-filter:blur(8px);padding:12px 20px;border-bottom:1px solid var(--border)}
+.progress-inner{max-width:680px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.progress-track{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:var(--primary);border-radius:3px;transition:width .4s ease;width:0%}
+.progress-label{font-size:13px;font-weight:500;color:var(--tm);white-space:nowrap}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:28px 32px;margin-bottom:16px;box-shadow:var(--ss);transition:box-shadow .2s;animation:fadeIn .35s ease forwards}
+.card:hover{box-shadow:var(--s)}
+.card-intro{border-left:4px solid var(--primary);background:linear-gradient(135deg,var(--card) 0%,var(--pl) 100%)}
+h1{font-family:'Fraunces',serif;font-size:28px;font-weight:700;color:var(--text);margin-bottom:8px;letter-spacing:-.5px}
+h2{font-family:'Fraunces',serif;font-size:20px;font-weight:600;color:var(--pd);margin-bottom:4px}
+h3{font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px}
+.subtitle{font-size:15px;color:var(--tm);line-height:1.7}
+.time-badge{display:inline-flex;align-items:center;gap:4px;background:var(--al);color:var(--amber);font-size:12px;font-weight:600;padding:4px 10px;border-radius:20px;margin-bottom:12px}
+.section-header{background:var(--primary);color:#fff;border:none;padding:20px 32px}
+.section-header h2{color:#fff;font-size:18px}
+.section-header p{color:rgba(255,255,255,.85);font-size:14px}
+.assumption-label{display:inline-block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--primary);background:var(--pl);padding:3px 10px;border-radius:4px;margin-bottom:10px}
+.scenario{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:12px 16px;margin-bottom:16px;font-size:14px;color:var(--tm);font-style:italic;line-height:1.6}
+.scenario::before{content:'\1F4AD '}
+.question{margin-bottom:20px}
+.question:last-child{margin-bottom:0}
+.q-label{display:block;font-size:14px;font-weight:500;color:var(--text);margin-bottom:10px;line-height:1.5}
+.required::after{content:' *';color:var(--primary)}
+.likert{display:flex;gap:0;margin-top:4px}
+.likert-labels{display:flex;justify-content:space-between;margin-top:6px;font-size:11px;color:var(--tl)}
+.likert label{flex:1;text-align:center;cursor:pointer;padding:10px 4px;border:1px solid var(--border);margin-left:-1px;font-size:14px;font-weight:500;color:var(--tm);transition:all .15s;background:var(--card)}
+.likert label:first-child{border-radius:var(--rs) 0 0 var(--rs);margin-left:0}
+.likert label:last-child{border-radius:0 var(--rs) var(--rs) 0}
+.likert input{display:none}
+.likert label:has(input:checked){background:var(--primary);color:#fff;border-color:var(--primary);z-index:1;position:relative;font-weight:600}
+.radio-group{display:flex;flex-direction:column;gap:8px}
+.radio-option{display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid var(--border);border-radius:var(--rs);cursor:pointer;transition:all .15s;font-size:14px}
+.radio-option:hover{border-color:var(--primary);background:var(--pl)}
+.radio-option input[type="radio"]{appearance:none;-webkit-appearance:none;width:18px;height:18px;border:2px solid var(--border);border-radius:50%;flex-shrink:0;transition:all .15s;position:relative}
+.radio-option input[type="radio"]:checked{border-color:var(--primary);background:var(--primary)}
+.radio-option input[type="radio"]:checked::after{content:'';position:absolute;width:6px;height:6px;background:#fff;border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%)}
+.radio-option:has(input:checked){border-color:var(--primary);background:var(--pl)}
+.check-group{display:flex;flex-direction:column;gap:8px}
+.check-option{display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid var(--border);border-radius:var(--rs);cursor:pointer;transition:all .15s;font-size:14px}
+.check-option:hover{border-color:var(--primary);background:var(--pl)}
+.check-option input[type="checkbox"]{appearance:none;-webkit-appearance:none;width:18px;height:18px;border:2px solid var(--border);border-radius:4px;flex-shrink:0;transition:all .15s;position:relative}
+.check-option input[type="checkbox"]:checked{border-color:var(--primary);background:var(--primary)}
+.check-option input[type="checkbox"]:checked::after{content:'\2713';position:absolute;color:#fff;font-size:12px;font-weight:700;top:50%;left:50%;transform:translate(-50%,-50%)}
+.check-option:has(input:checked){border-color:var(--primary);background:var(--pl)}
+textarea{width:100%;border:1px solid var(--border);border-radius:var(--rs);padding:12px 14px;font-family:inherit;font-size:14px;line-height:1.5;resize:vertical;min-height:60px;transition:border-color .2s;color:var(--text)}
+textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(224,90,58,.1)}
+textarea::placeholder{color:var(--tl)}
+.role-selector{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+.role-card{border:2px solid var(--border);border-radius:var(--r);padding:20px;cursor:pointer;transition:all .2s;text-align:center;background:var(--card)}
+.role-card:hover{border-color:var(--primary);transform:translateY(-1px);box-shadow:var(--sm)}
+.role-card.selected{border-color:var(--primary);background:var(--pl)}
+.role-card .emoji{font-size:32px;margin-bottom:8px}
+.role-card .role-title{font-weight:600;font-size:15px;margin-bottom:4px}
+.role-card .role-desc{font-size:12px;color:var(--tm)}
+.role-hint{font-size:12px;color:var(--tl);text-align:center;margin-top:8px}
+.section{display:none}
+.section.active{display:block}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 28px;border:none;border-radius:var(--rs);font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;text-decoration:none}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--ph);transform:translateY(-1px);box-shadow:var(--sm)}
+.btn-primary:disabled{background:var(--tl);cursor:not-allowed;transform:none;box-shadow:none}
+.btn-secondary{background:var(--surface);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{background:var(--border)}
+.btn-row{display:flex;justify-content:space-between;align-items:center;margin-top:24px}
+.thank-you{text-align:center;padding:60px 32px}
+.thank-you .emoji{font-size:48px;margin-bottom:16px}
+.thank-you h2{font-size:24px;color:var(--text);margin-bottom:12px}
+.thank-you p{color:var(--tm);max-width:420px;margin:0 auto}
+.footer{text-align:center;padding:32px 20px;font-size:12px;color:var(--tl)}
+.submit-status{text-align:center;padding:12px;border-radius:var(--rs);margin-top:12px;font-size:14px;font-weight:500;display:none}
+.submit-status.sending{display:block;background:#EFF6FF;color:#2563EB}
+.submit-status.error{display:block;background:#FEF2F2;color:#DC2626}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid #2563EB;border-top-color:transparent;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:6px}
+@media(max-width:480px){.container{padding:30px 12px 60px}.card{padding:20px 18px}h1{font-size:22px}.role-selector{grid-template-columns:1fr}.likert label{padding:8px 2px;font-size:13px}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="top-bar"></div>
+<div class="progress-wrap" id="progressWrap" style="display:none;">
+  <div class="progress-inner">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <span class="progress-label" id="progressLabel">0%</span>
+  </div>
+</div>
+<div class="container" id="app">
+
+<!-- INTRO -->
+<div class="section active" id="sec-intro">
+  <div class="card card-intro">
+    <div class="time-badge">Ongeveer 4–5 minuten</div>
+    <h1>Help ons SaySammy vormgeven</h1>
+
+    <!-- ORIGINAL INTRO TEXT (kept) -->
+    <p class="subtitle" style="margin-bottom:16px;"><strong>SaySammy</strong> is een app-concept dat het vragen om alledaagse hulp — zoals boodschappen, maaltijden of klusjes — eenvoudig, veilig en zonder schroom maakt. In plaats van alleen op je naaste familie te rekenen, laat SaySammy je een bredere <em>hulpkring</em> opbouwen van vertrouwde mensen om je heen, met optionele vergoeding om de drempel weg te nemen.</p>
+    <p class="subtitle" style="margin-bottom:16px;">We onderzoeken hoe mensen écht denken over hulp geven en ontvangen. Jouw eerlijke antwoorden bepalen rechtstreeks hoe SaySammy werkt — van de interface tot de sociale dynamiek.</p>
+    <p class="subtitle" style="font-size:13px;color:var(--tl); margin-bottom:16px;">Alle antwoorden zijn anoniem. Er zijn geen goede of foute antwoorden — we zijn op zoek naar je eerlijke buikgevoel.</p>
+
+    <!-- ADDED: "Before you start" sequence + links/buttons -->
+    <div style="border-top:1px solid var(--border); padding-top:14px; margin-top:6px;">
+      <h3 style="margin-bottom:6px;">Voordat je begint</h3>
+      <p class="subtitle" style="margin-bottom:10px;">
+        Volg deze volgorde voor de meest realistische feedback:
+      </p>
+      <ol style="margin:0 0 12px 20px; color:var(--text); font-size:15px; line-height:1.7;">
+        <li style="margin-bottom:6px;">🎬 <strong>Bekijk de korte conceptvideo</strong></li>
+        <li style="margin-bottom:6px;">📱 <strong>Probeer de interactieve demo (rondleiding)</strong></li>
+        <li style="margin-bottom:0;">✅ <strong>Vul de enquête in</strong></li>
+      </ol>
+
+      <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:6px;">
+        <a href="https://youtu.be/qSkZ103FWsY" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+          🎬 Bekijk conceptvideo
+        </a>
+        <a href="https://tinyurl.com/SaySammyDemo" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+          📱 Probeer interactieve demo
+        </a>
+      </div>
+
+      <p class="subtitle" style="font-size:13px;color:var(--tm);">
+        (Tip: houd dit tabblad open zodat je daarna terug kunt komen om de enquête in te vullen.)
+      </p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Vanuit welk(e) perspectief(en) wil je feedback geven?</h3>
+    <p style="font-size:13px;color:var(--tm);margin-bottom:12px;">Kies één of beide. Elk onderdeel duurt ongeveer 4–5 minuten.</p>
+
+    <!-- OPTION B: confirmation checkbox gating start -->
+    <div style="margin-top:14px; padding:12px 14px; border:1px solid var(--border); border-radius:var(--rs); background:var(--surface);">
+      <label style="display:flex; gap:10px; align-items:flex-start; font-size:14px; color:var(--text); cursor:pointer;">
+        <input type="checkbox" id="confirmedExperience" onchange="checkExperience()" style="margin-top:3px;">
+        <span><strong>I have watched the video and tried the demo</strong><br><span style="font-size:12px; color:var(--tm);">This helps ensure your feedback is based on the same experience.</span></span>
+      </label>
+    </div>
+
+    <div class="role-selector">
+      <div class="role-card" id="role-seeker" onclick="toggleRole('seeker')">
+        <div class="emoji">🙋</div>
+        <div class="role-title">Hulpvrager</div>
+        <div class="role-desc">Ik zou hulp kunnen vragen</div>
+      </div>
+      <div class="role-card" id="role-provider" onclick="toggleRole('provider')">
+        <div class="emoji">🤝</div>
+        <div class="role-title">Hulpbieder</div>
+        <div class="role-desc">Ik zou op verzoeken kunnen reageren</div>
+      </div>
+    </div>
+    <div class="role-hint">Je kunt beide rollen selecteren</div>
+    <div class="btn-row" style="justify-content:flex-end;">
+      <button class="btn btn-primary" id="startBtn" disabled onclick="startSurvey()">Aan de slag →</button>
+    </div>
+  </div>
+</div>
+
+<!-- HELP SEEKERS -->
+<div class="section" id="sec-seeker">
+  <div class="card section-header"><h2>🙋 Deel 1 — Hulpvragers</h2><p>Hoe jij je voelt over hulp vragen</p></div>
+
+  <div class="card">
+    
+    <div class="scenario">Stel je voor dat je overbelast bent en boodschappen of een maaltijd nodig hebt.</div>
+    <div class="question"><label class="q-label required">1. Hoe comfortabel voel je je om hulp te vragen aan mensen buiten je naaste kring?</label><div class="likert"><label><input type="radio" name="seek_comfort_asking" value="1"><span>1</span></label><label><input type="radio" name="seek_comfort_asking" value="2"><span>2</span></label><label><input type="radio" name="seek_comfort_asking" value="3"><span>3</span></label><label><input type="radio" name="seek_comfort_asking" value="4"><span>4</span></label><label><input type="radio" name="seek_comfort_asking" value="5"><span>5</span></label><label><input type="radio" name="seek_comfort_asking" value="6"><span>6</span></label><label><input type="radio" name="seek_comfort_asking" value="7"><span>7</span></label></div><div class="likert-labels"><span>Helemaal niet comfortabel</span><span>Zeer comfortabel</span></div></div>
+    <div class="question"><label class="q-label required">2. Als vergoeding een optie zou zijn, zou je dan sneller hulp vragen?</label><div class="radio-group"><label class="radio-option"><input type="radio" name="seek_compensation_likelihood" value="More likely"> Waarschijnlijker</label><label class="radio-option"><input type="radio" name="seek_compensation_likelihood" value="No difference"> Geen verschil</label><label class="radio-option"><input type="radio" name="seek_compensation_likelihood" value="Less likely"> Minder waarschijnlijk</label></div></div>
+    <div class="question"><label class="q-label required">3. In welke situaties zou je overwegen een vergoeding aan te bieden?</label><div class="radio-group"><label class="radio-option"><input type="radio" name="seek_compensation_situations" value="Urgent only"> Alleen bij urgentie</label><label class="radio-option"><input type="radio" name="seek_compensation_situations" value="Planned tasks"> Geplande taken</label><label class="radio-option"><input type="radio" name="seek_compensation_situations" value="All tasks"> Alle taken</label><label class="radio-option"><input type="radio" name="seek_compensation_situations" value="Prefer not to compensate"> Liever geen vergoeding</label><label class="radio-option"><input type="radio" name="seek_compensation_situations" value="Not sure"> Weet ik niet</label></div></div>
+  </div>
+
+  <div class="card">
+    
+    <div class="scenario">Stel je voor dat twee mensen kunnen helpen: iemand vertrouwd (gratis) of iemand minder bekend (betaald).</div>
+    <div class="question"><label class="q-label required">4. Welke factor zou je het zwaarst laten wegen?</label><div class="radio-group"><label class="radio-option"><input type="radio" name="seek_trust_vs_speed_vs_cost" value="Trust"> Vertrouwen</label><label class="radio-option"><input type="radio" name="seek_trust_vs_speed_vs_cost" value="Speed"> Snelheid</label><label class="radio-option"><input type="radio" name="seek_trust_vs_speed_vs_cost" value="Cost"> Kosten</label><label class="radio-option"><input type="radio" name="seek_trust_vs_speed_vs_cost" value="No strong preference"> Geen sterke voorkeur</label></div></div>
+    <div class="question"><label class="q-label required">5. Hoe belangrijk is vertrouwdheid bij huishoudelijke taken (bijv. boodschappen)?</label><div class="likert"><label><input type="radio" name="seek_familiarity_importance" value="1"><span>1</span></label><label><input type="radio" name="seek_familiarity_importance" value="2"><span>2</span></label><label><input type="radio" name="seek_familiarity_importance" value="3"><span>3</span></label><label><input type="radio" name="seek_familiarity_importance" value="4"><span>4</span></label><label><input type="radio" name="seek_familiarity_importance" value="5"><span>5</span></label><label><input type="radio" name="seek_familiarity_importance" value="6"><span>6</span></label><label><input type="radio" name="seek_familiarity_importance" value="7"><span>7</span></label></div><div class="likert-labels"><span>Helemaal niet belangrijk</span><span>Zeer belangrijk</span></div></div>
+  </div>
+
+  <div class="card">
+    
+    <div class="scenario">Stel je voor dat je je hulpkring handmatig of via WhatsApp/Facebook-import kunt opzetten.</div>
+    <div class="question"><label class="q-label required">6. Hoe comfortabel voel je je bij het koppelen van een berichten- of sociale app?</label><div class="likert"><label><input type="radio" name="seek_social_import_comfort" value="1"><span>1</span></label><label><input type="radio" name="seek_social_import_comfort" value="2"><span>2</span></label><label><input type="radio" name="seek_social_import_comfort" value="3"><span>3</span></label><label><input type="radio" name="seek_social_import_comfort" value="4"><span>4</span></label><label><input type="radio" name="seek_social_import_comfort" value="5"><span>5</span></label><label><input type="radio" name="seek_social_import_comfort" value="6"><span>6</span></label><label><input type="radio" name="seek_social_import_comfort" value="7"><span>7</span></label></div><div class="likert-labels"><span>Helemaal niet comfortabel</span><span>Zeer comfortabel</span></div></div>
+    <div class="question"><label class="q-label required">7. Welke opzet heeft je voorkeur?</label><div class="radio-group"><label class="radio-option"><input type="radio" name="seek_circle_setup_pref" value="Import contacts"> Contacten importeren</label><label class="radio-option"><input type="radio" name="seek_circle_setup_pref" value="Add manually"> Handmatig toevoegen</label><label class="radio-option"><input type="radio" name="seek_circle_setup_pref" value="No preference"> Geen voorkeur</label></div></div>
+  </div>
+
+  <div class="card">
+    
+    <div class="scenario">Stel je voor dat je handen vol zijn en je snel een verzoek moet versturen.</div>
+    <div class="question"><label class="q-label required">8. Welke methode heeft je voorkeur?</label><div class="radio-group"><label class="radio-option"><input type="radio" name="seek_voice_vs_tap" value="Voice"> Spraak</label><label class="radio-option"><input type="radio" name="seek_voice_vs_tap" value="Tap"> Tikken</label><label class="radio-option"><input type="radio" name="seek_voice_vs_tap" value="Depends"> Hangt af van de situatie</label></div></div>
+    <div class="question"><label class="q-label required">9. Hoe belangrijk is het om een verzoek na te lezen voor je het verstuurt?</label><div class="likert"><label><input type="radio" name="seek_review_before_send" value="1"><span>1</span></label><label><input type="radio" name="seek_review_before_send" value="2"><span>2</span></label><label><input type="radio" name="seek_review_before_send" value="3"><span>3</span></label><label><input type="radio" name="seek_review_before_send" value="4"><span>4</span></label><label><input type="radio" name="seek_review_before_send" value="5"><span>5</span></label><label><input type="radio" name="seek_review_before_send" value="6"><span>6</span></label><label><input type="radio" name="seek_review_before_send" value="7"><span>7</span></label></div><div class="likert-labels"><span>Helemaal niet belangrijk</span><span>Zeer belangrijk</span></div></div>
+  </div>
+
+  <div class="card">
+    
+    <div class="scenario">Stel je voor dat iemand je verzoek afwijst, ook als er een vergoeding wordt aangeboden.</div>
+    <div class="question"><label class="q-label required">10. Hoe comfortabel voel je je als iemand je hulpverzoek afwijst?</label><div class="likert"><label><input type="radio" name="seek_comfort_being_declined" value="1"><span>1</span></label><label><input type="radio" name="seek_comfort_being_declined" value="2"><span>2</span></label><label><input type="radio" name="seek_comfort_being_declined" value="3"><span>3</span></label><label><input type="radio" name="seek_comfort_being_declined" value="4"><span>4</span></label><label><input type="radio" name="seek_comfort_being_declined" value="5"><span>5</span></label><label><input type="radio" name="seek_comfort_being_declined" value="6"><span>6</span></label><label><input type="radio" name="seek_comfort_being_declined" value="7"><span>7</span></label></div><div class="likert-labels"><span>Helemaal niet comfortabel</span><span>Zeer comfortabel</span></div></div>
+    <div class="question"><label class="q-label required">11. Vermindert het aanbieden van vergoeding je gevoel dat je anderen belast?</label><div class="radio-group"><label class="radio-option"><input type="radio" name="seek_compensation_reduces_burden" value="Yes"> Ja</label><label class="radio-option"><input type="radio" name="seek_compensation_reduces_burden" value="No"> Nee</label><label class="radio-option"><input type="radio" name="seek_compensation_reduces_burden" value="Not sure"> Weet ik niet</label></div></div>
+  </div>
+
+  <div class="card">
+    
+    <div class="scenario">Stel je voor dat de app één hoofdknop en een korte contactlijst toont.</div>
+    <div class="question"><label class="q-label required">12. Hoe makkelijk zou zo'n eenvoudige lay-out aanvoelen in een stressvol moment?</label><div class="likert"><label><input type="radio" name="seek_simple_layout_ease" value="1"><span>1</span></label><label><input type="radio" name="seek_simple_layout_ease" value="2"><span>2</span></label><label><input type="radio" name="seek_simple_layout_ease" value="3"><span>3</span></label><label><input type="radio" name="seek_simple_layout_ease" value="4"><span>4</span></label><label><input type="radio" name="seek_simple_layout_ease" value="5"><span>5</span></label><label><input type="radio" name="seek_simple_layout_ease" value="6"><span>6</span></label><label><input type="radio" name="seek_simple_layout_ease" value="7"><span>7</span></label></div><div class="likert-labels"><span>Helemaal niet makkelijk</span><span>Zeer makkelijk</span></div></div>
+    <div class="question"><label class="q-label required">13. Welke informatie wil je direct zien? <span style="font-weight:400;color:var(--tm);">(selecteer alles wat van toepassing is)</span></label><div class="check-group"><label class="check-option"><input type="checkbox" name="seek_info_needed_immediately" value="Who received the request"> Wie het verzoek heeft ontvangen</label><label class="check-option"><input type="checkbox" name="seek_info_needed_immediately" value="Who responded"> Wie heeft gereageerd</label><label class="check-option"><input type="checkbox" name="seek_info_needed_immediately" value="ETA"> Geschatte aankomsttijd</label><label class="check-option"><input type="checkbox" name="seek_info_needed_immediately" value="No preference"> Geen voorkeur</label></div></div>
+  </div>
+
+  <div class="card"><div class="question"><label class="q-label">14. OPTIONEEL — Is er iets dat het vragen om hulp makkelijker zou maken voor jou?</label><textarea name="seek_open_feedback" placeholder="Eén zin maximaal..." maxlength="200"></textarea></div></div>
+
+  <div class="btn-row">
+    <button class="btn btn-secondary" onclick="goBack('seeker')">← Terug</button>
+    <button class="btn btn-primary" id="seekerNext" onclick="finishSeeker()">Continue →</button>
+  </div>
+</div>
+
+<!-- HELP PROVIDERS -->
+<div class="section" id="sec-provider">
+  <div class="card section-header"><h2>🤝 Deel 2 — Hulpbieders (Supporters)</h2><p>Hoe jij je voelt over het reageren op hulpverzoeken</p></div>
+
+  <div class="card">
+    
+    <div class="scenario">Stel je voor dat iemand die je vaag kent vraagt om boodschappen of een maaltijd, met vergoeding.</div>
+    <div class="question"><label class="q-label required">1. Verhoogt een vergoeding je bereidheid om te helpen?</label><div class="radio-group"><label class="radio-option"><input type="radio" name="prov_compensation_willingness" value="Yes"> Ja</label><label class="radio-option"><input type="radio" name="prov_compensation_willingness" value="No"> Nee</label><label class="radio-option"><input type="radio" name="prov_compensation_willingness" value="Sometimes"> Soms</label></div></div>
+    <div class="question"><label class="q-label required">2. Bij welke taken voelt een vergoeding gepast? <span style="font-weight:400;color:var(--tm);">(selecteer alles wat van toepassing is)</span></label><div class="check-group"><label class="check-option"><input type="checkbox" name="prov_compensation_task_fit" value="Groceries"> Boodschappen</label><label class="check-option"><input type="checkbox" name="prov_compensation_task_fit" value="Meal prep"> Maaltijdbereiding</label><label class="check-option"><input type="checkbox" name="prov_compensation_task_fit" value="Errands"> Boodschappen/klusjes</label><label class="check-option"><input type="checkbox" name="prov_compensation_task_fit" value="Driving"> Rijden</label><label class="check-option"><input type="checkbox" name="prov_compensation_task_fit" value="None"> Geen</label></div></div>
+  </div>
+
+  <div class="card">
+    
+    <div class="scenario">Stel je voor dat twee verzoeken binnenkomen: één van iemand vertrouwd (gratis), één met vergoeding maar minder bekend.</div>
+    <div class="question"><label class="q-label required">3. Welke zou je waarschijnlijk kiezen?</label><div class="radio-group"><label class="radio-option"><input type="radio" name="prov_familiar_vs_compensated" value="Familiar"> Vertrouwd (gratis)</label><label class="radio-option"><input type="radio" name="prov_familiar_vs_compensated" value="Compensated"> Met vergoeding (minder bekend)</label><label class="radio-option"><input type="radio" name="prov_familiar_vs_compensated" value="Depends"> Hangt ervan af</label></div></div>
+    <div class="question"><label class="q-label required">4. Hoe belangrijk is het om de aanvrager te kennen?</label><div class="likert"><label><input type="radio" name="prov_knowing_requester_importance" value="1"><span>1</span></label><label><input type="radio" name="prov_knowing_requester_importance" value="2"><span>2</span></label><label><input type="radio" name="prov_knowing_requester_importance" value="3"><span>3</span></label><label><input type="radio" name="prov_knowing_requester_importance" value="4"><span>4</span></label><label><input type="radio" name="prov_knowing_requester_importance" value="5"><span>5</span></label><label><input type="radio" name="prov_knowing_requester_importance" value="6"><span>6</span></label><label><input type="radio" name="prov_knowing_requester_importance" value="7"><span>7</span></label></div><div class="likert-labels"><span>Helemaal niet belangrijk</span><span>Zeer belangrijk</span></div></div>
+  </div>
+
+  <div class="card">
+    
+    <div class="scenario">Stel je voor dat je handmatig of via WhatsApp/Facebook-import aan een hulpkring wordt toegevoegd.</div>
+    <div class="question"><label class="q-label required">5. Hoe comfortabel voel je je als je via social media-import wordt toegevoegd?</label><div class="likert"><label><input type="radio" name="prov_social_import_comfort" value="1"><span>1</span></label><label><input type="radio" name="prov_social_import_comfort" value="2"><span>2</span></label><label><input type="radio" name="prov_social_import_comfort" value="3"><span>3</span></label><label><input type="radio" name="prov_social_import_comfort" value="4"><span>4</span></label><label><input type="radio" name="prov_social_import_comfort" value="5"><span>5</span></label><label><input type="radio" name="prov_social_import_comfort" value="6"><span>6</span></label><label><input type="radio" name="prov_social_import_comfort" value="7"><span>7</span></label></div><div class="likert-labels"><span>Helemaal niet comfortabel</span><span>Zeer comfortabel</span></div></div>
+    <div class="question"><label class="q-label required">6. Welke methode voelt het meest gepast?</label><div class="radio-group"><label class="radio-option"><input type="radio" name="prov_circle_join_method" value="Manual invite"> Handmatige uitnodiging</label><label class="radio-option"><input type="radio" name="prov_circle_join_method" value="Import"> Importeren</label><label class="radio-option"><input type="radio" name="prov_circle_join_method" value="QR code"> QR-code</label><label class="radio-option"><input type="radio" name="prov_circle_join_method" value="No preference"> Geen voorkeur</label></div></div>
+  </div>
+
+  <div class="card">
+    
+    <div class="scenario">Stel je voor dat je een verzoek ontvangt als tekstbericht of spraakbericht.</div>
+    <div class="question"><label class="q-label required">7. Welk formaat helpt je sneller te beslissen?</label><div class="radio-group"><label class="radio-option"><input type="radio" name="prov_text_vs_voice" value="Text"> Tekst</label><label class="radio-option"><input type="radio" name="prov_text_vs_voice" value="Voice note"> Spraakbericht</label><label class="radio-option"><input type="radio" name="prov_text_vs_voice" value="No preference"> Geen voorkeur</label></div></div>
+    <div class="question"><label class="q-label required">8. Hoe belangrijk is structuur/duidelijkheid in een verzoek?</label><div class="likert"><label><input type="radio" name="prov_request_clarity_importance" value="1"><span>1</span></label><label><input type="radio" name="prov_request_clarity_importance" value="2"><span>2</span></label><label><input type="radio" name="prov_request_clarity_importance" value="3"><span>3</span></label><label><input type="radio" name="prov_request_clarity_importance" value="4"><span>4</span></label><label><input type="radio" name="prov_request_clarity_importance" value="5"><span>5</span></label><label><input type="radio" name="prov_request_clarity_importance" value="6"><span>6</span></label><label><input type="radio" name="prov_request_clarity_importance" value="7"><span>7</span></label></div><div class="likert-labels"><span>Helemaal niet belangrijk</span><span>Zeer belangrijk</span></div></div>
+  </div>
+
+  <div class="card">
+    
+    <div class="scenario">Stel je voor dat je het druk hebt en een verzoek moet afwijzen.</div>
+    <div class="question"><label class="q-label required">9. Hoe comfortabel voel je je om verzoeken in het algemeen af te wijzen?</label><div class="likert"><label><input type="radio" name="prov_comfort_declining" value="1"><span>1</span></label><label><input type="radio" name="prov_comfort_declining" value="2"><span>2</span></label><label><input type="radio" name="prov_comfort_declining" value="3"><span>3</span></label><label><input type="radio" name="prov_comfort_declining" value="4"><span>4</span></label><label><input type="radio" name="prov_comfort_declining" value="5"><span>5</span></label><label><input type="radio" name="prov_comfort_declining" value="6"><span>6</span></label><label><input type="radio" name="prov_comfort_declining" value="7"><span>7</span></label></div><div class="likert-labels"><span>Helemaal niet comfortabel</span><span>Zeer comfortabel</span></div></div>
+    <div class="question"><label class="q-label required">10. Verandert een vergoeding je comfort bij het afwijzen?</label><div class="radio-group"><label class="radio-option"><input type="radio" name="prov_compensation_changes_declining" value="More comfortable"> Meer comfortabel</label><label class="radio-option"><input type="radio" name="prov_compensation_changes_declining" value="Less comfortable"> Minder comfortabel</label><label class="radio-option"><input type="radio" name="prov_compensation_changes_declining" value="No difference"> Geen verschil</label></div></div>
+  </div>
+
+  <div class="card">
+    
+    <div class="scenario">Stel je voor dat je een eenvoudig scherm ziet met de taak, benodigde tijd en vergoeding.</div>
+    <div class="question"><label class="q-label required">11. Hoe snel zou je ja/nee kunnen beslissen met deze lay-out?</label><div class="radio-group"><label class="radio-option"><input type="radio" name="prov_decision_speed" value="Immediately"> Meteen</label><label class="radio-option"><input type="radio" name="prov_decision_speed" value="Takes a few moments"> Heeft even nodig</label><label class="radio-option"><input type="radio" name="prov_decision_speed" value="Not quickly"> Niet snel</label></div></div>
+    <div class="question"><label class="q-label required">12. Welke informatie heb je nodig voordat je accepteert? <span style="font-weight:400;color:var(--tm);">(selecteer alles wat van toepassing is)</span></label><div class="check-group"><label class="check-option"><input type="checkbox" name="prov_info_needed_to_accept" value="Time"> Tijd</label><label class="check-option"><input type="checkbox" name="prov_info_needed_to_accept" value="Location"> Locatie</label><label class="check-option"><input type="checkbox" name="prov_info_needed_to_accept" value="Task type"> Type taak</label><label class="check-option"><input type="checkbox" name="prov_info_needed_to_accept" value="Compensation"> Vergoeding</label><label class="check-option"><input type="checkbox" name="prov_info_needed_to_accept" value="None"> Geen</label></div></div>
+  </div>
+
+  <div class="card"><div class="question"><label class="q-label">13. OPTIONEEL — Wat zou het reageren op verzoeken makkelijker maken voor jou?</label><textarea name="prov_open_feedback" placeholder="Eén zin maximaal..." maxlength="200"></textarea></div></div>
+
+  <div class="btn-row">
+    <button class="btn btn-secondary" onclick="goBack('provider')">← Terug</button>
+    <button class="btn btn-primary" id="submitBtn" onclick="submitSurvey()">Enquête versturen ✓</button>
+  </div>
+  <div class="submit-status" id="submitStatus"></div>
+</div>
+
+<!-- THANK YOU -->
+<div class="section" id="sec-thanks">
+  <div class="card thank-you">
+    <div class="emoji">🎉</div>
+    <h2>Bedankt!</h2>
+    <p>Jouw feedback bepaalt rechtstreeks hoe SaySammy gebouwd wordt. We waarderen het enorm dat je de tijd hebt genomen om je eerlijke mening te delen.</p>
+  </div>
+</div>
+
+</div>
+<div class="footer">SaySammy Enquête · Met zorg gemaakt</div>
+
+<script>
+// =====================================================
+// CONFIG — Paste your Google Apps Script Web App URL here
+// =====================================================
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbybVcWZvbdP8XZiDdwoOWVKN5PFuKTgoQAWCHPc4H3nM9zNX3i1TRdmebJ7uRPFKXWO/exec';
+// =====================================================
+
+let selectedRoles = new Set();
+let currentSection = 'intro';
+let sectionOrder = [];
+
+function updateStartBtn() {
+  var startBtn = document.getElementById('startBtn');
+  var confirmed = document.getElementById('confirmedExperience');
+  var okExperience = confirmed ? confirmed.checked : true; // fallback if checkbox removed
+  startBtn.disabled = (selectedRoles.size === 0) || (!okExperience);
+}
+
+function checkExperience() {
+  updateStartBtn();
+}
+
+function toggleRole(r) {
+  const e = document.getElementById('role-' + r);
+  if (selectedRoles.has(r)) { selectedRoles.delete(r); e.classList.remove('selected'); }
+  else { selectedRoles.add(r); e.classList.add('selected'); }
+  updateStartBtn();
+}
+
+function startSurvey() {
+  sectionOrder = [];
+  if (selectedRoles.has('seeker')) sectionOrder.push('seeker');
+  if (selectedRoles.has('provider')) sectionOrder.push('provider');
+  sectionOrder.push('thanks');
+  showSection(sectionOrder[0]);
+  document.getElementById('progressWrap').style.display = 'block';
+  updateProgress();
+}
+
+function showSection(n) {
+  document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
+  document.getElementById('sec-' + n).classList.add('active');
+  currentSection = n;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  updateProgress();
+  if (n === 'seeker') {
+    var b = document.getElementById('seekerNext');
+    b.textContent = selectedRoles.has('provider') ? 'Verder naar Hulpbieders \u2192' : 'Enquête versturen \u2713';
+  }
+}
+
+function goBack(f) {
+  if (f === 'seeker') { showSection('intro'); document.getElementById('progressWrap').style.display = 'none'; }
+  else if (f === 'provider') {
+    if (selectedRoles.has('seeker')) showSection('seeker');
+    else { showSection('intro'); document.getElementById('progressWrap').style.display = 'none'; }
+  }
+}
+
+function finishSeeker() {
+  if (selectedRoles.has('provider')) showSection('provider');
+  else submitSurvey();
+}
+
+function updateProgress() {
+  var i = sectionOrder.indexOf(currentSection), t = sectionOrder.length - 1;
+  if (t <= 0) return;
+  var p = Math.round((i / t) * 100);
+  document.getElementById('progressFill').style.width = p + '%';
+  document.getElementById('progressLabel').textContent = p + '%';
+}
+
+// Collect all form data into a flat object
+function collectData() {
+  var data = {};
+  data.roles = Array.from(selectedRoles).join(', ');
+
+  // Radio buttons (single-select + likert)
+  var radios = [
+    'seek_comfort_asking','seek_compensation_likelihood','seek_compensation_situations',
+    'seek_trust_vs_speed_vs_cost','seek_familiarity_importance','seek_social_import_comfort',
+    'seek_circle_setup_pref','seek_voice_vs_tap','seek_review_before_send',
+    'seek_comfort_being_declined','seek_compensation_reduces_burden','seek_simple_layout_ease',
+    'prov_compensation_willingness','prov_familiar_vs_compensated','prov_knowing_requester_importance',
+    'prov_social_import_comfort','prov_circle_join_method','prov_text_vs_voice',
+    'prov_request_clarity_importance','prov_comfort_declining','prov_compensation_changes_declining',
+    'prov_decision_speed'
+  ];
+  radios.forEach(function(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    data[name] = el ? el.value : '';
+  });
+
+  // Checkboxes (multi-select)
+  var checks = ['seek_info_needed_immediately','prov_compensation_task_fit','prov_info_needed_to_accept'];
+  checks.forEach(function(name) {
+    var checked = document.querySelectorAll('input[name="' + name + '"]:checked');
+    var values = [];
+    checked.forEach(function(c) { values.push(c.value); });
+    data[name] = values;
+  });
+
+  // Textareas
+  var texts = ['seek_open_feedback','prov_open_feedback'];
+  texts.forEach(function(name) {
+    var el = document.querySelector('textarea[name="' + name + '"]');
+    data[name] = el ? el.value.trim() : '';
+  });
+
+  return data;
+}
+
+// Submit to Google Sheets
+function submitSurvey() {
+  var btn = document.getElementById('submitBtn') || document.getElementById('seekerNext');
+  var status = document.getElementById('submitStatus');
+
+  // If URL not configured, go straight to thank-you (offline mode)
+  if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL === 'YOUR_GOOGLE_SCRIPT_URL') {
+    console.warn('Google Script URL not configured — running in offline/preview mode');
+    showSection('thanks');
+    document.getElementById('progressWrap').style.display = 'none';
+    return;
+  }
+
+  // Show sending state
+  btn.disabled = true;
+  btn.textContent = 'Versturen...';
+  if (status) {
+    status.className = 'submit-status sending';
+    status.innerHTML = '<span class="spinner"></span> Je antwoorden worden verstuurd...';
+  }
+
+  var data = collectData();
+
+  fetch(GOOGLE_SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  })
+  .then(function() {
+    // no-cors means we can't read response, but submission went through
+    showSection('thanks');
+    document.getElementById('progressWrap').style.display = 'none';
+  })
+  .catch(function(err) {
+    console.error('Submit error:', err);
+    btn.disabled = false;
+    btn.textContent = 'Enquête versturen \u2713';
+    if (status) {
+      status.className = 'submit-status error';
+      status.textContent = 'Er ging iets mis. Probeer het opnieuw.';
+    }
+  });
+}
+
+// "No preference"/"None" exclusivity for checkboxes
+document.querySelectorAll('.check-group').forEach(function(g) {
+  var boxes = g.querySelectorAll('input[type="checkbox"]');
+  boxes.forEach(function(b) {
+    b.addEventListener('change', function() {
+      var isNone = b.value === 'No preference' || b.value === 'None';
+      if (isNone && b.checked) boxes.forEach(function(x) { if (x !== b) x.checked = false; });
+      else if (!isNone && b.checked) boxes.forEach(function(x) { if (x.value === 'No preference' || x.value === 'None') x.checked = false; });
+    });
+  });
+});
+
+// Initialize start button state
+updateStartBtn();
+</script>
+</body>
+</html>
